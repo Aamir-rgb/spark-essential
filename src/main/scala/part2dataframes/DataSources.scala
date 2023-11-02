@@ -1,5 +1,6 @@
 package part2dataframes
 
+import com.fasterxml.jackson.databind.JsonNode.OverwriteMode
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.types._
 
@@ -94,9 +95,9 @@ object DataSources extends App {
 
   // Reading from a remote DB
   val driver = "org.postgresql.Driver"
-  val url = "jdbc:postgresql://localhost:5432/rtjvm"
-  val user = "docker"
-  val password = "docker"
+  val url = "jdbc:postgresql://localhost:5432/postgres"
+  val user = "postgres"
+  val password = "admin"
 
   val employeesDF = spark.read
     .format("jdbc")
@@ -104,7 +105,7 @@ object DataSources extends App {
     .option("url", url)
     .option("user", user)
     .option("password", password)
-    .option("dbtable", "public.employees")
+    .option("dbtable", "public.employee")
     .load()
 
   /**
@@ -121,10 +122,11 @@ object DataSources extends App {
     .format("csv")
     .option("header", "true")
     .option("sep", "\t")
+    .mode(SaveMode.Overwrite)
     .save("src/main/resources/data/movies.csv")
 
   // Parquet
-  moviesDF.write.save("src/main/resources/data/movies.parquet")
+  moviesDF.write.mode(SaveMode.Overwrite).save("src/main/resources/data/movies.parquet")
 
   // save to DF
   moviesDF.write
@@ -134,5 +136,6 @@ object DataSources extends App {
     .option("user", user)
     .option("password", password)
     .option("dbtable", "public.movies")
+    .mode(SaveMode.Overwrite)
     .save()
 }
