@@ -54,4 +54,9 @@ object Joins extends App {
   //Using Columns Types
   guitaristDF.join(guitarsDF.withColumnRenamed("id", "guitarId"), expr("array_contains(guitars, guitarId)"))
 
+  /**
+   * Exercises show all employees and their max salary
+   *
+   */
+
 }
