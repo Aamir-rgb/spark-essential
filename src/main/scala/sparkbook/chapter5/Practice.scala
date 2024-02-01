@@ -90,4 +90,44 @@ object Practice extends App {
   df.withColumn("withinCountry",expr("ORIGIN_COUNTRY_NAME == DEST_COUNTRY_NAME")).show(2)
   df.withColumn("Destination",expr("DEST_COUNTRY_NAME")).columns
   df.withColumnRenamed("DEST_COUNTRY_NAME", "dest").columns
+
+  import org.apache.spark.sql.functions.expr
+  val dfWithLongColName = df.withColumn("This Long Column-Name",expr("ORIGIN_COUNTRY_NAME"))
+  dfWithLongColName.selectExpr("`This Long Column-Name`","`This Long Column-Name` as `new col`").show(2)
+  dfWithLongColName.createOrReplaceTempView("dfTableLong")
+  val df1 = df.drop("ORIGIN_COUNTRY_NAME")
+  df.columns
+  df1.printSchema()
+  val df2 = dfWithLongColName.drop("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME")
+  df2.printSchema()
+
+  val df3  = df.withColumn("count2",col("count").cast("string"))
+  df3.printSchema()
+
+  df.filter(col("count") < 2).show(2)
+  df.where("count < 2").show(2)
+  df.where(col("count") < 2).where(col("ORIGIN_COUNTRY_NAME") =!= "Croatia").show(2)
+  val df4 = df.select("ORIGIN_COUNTRY_NAME").distinct().count()
+  println(df4)
+
+  val seed = 5
+  val withReplacement = false
+  val fraction = 0.5
+  val df5 = df.sample(withReplacement, fraction, seed)
+  println(df5.count())
+
+  val dataFrames = df.randomSplit(Array(0.25, 0.75), seed)
+  println(dataFrames(0).count() > dataFrames(1).count())
+
+  val schema = df.schema
+  val newRows = Seq(
+    Row("New Country", "Other Country", 5L),
+    Row("New Country 2", "Other Country 3", 1L)
+  )
+  val parallelizedRows = Spark.sparkContext.parallelize(newRows)
+  val newDF = Spark.createDataFrame(parallelizedRows, schema)
+  val df6 = df.union(newDF)
+  df6.printSchema()
+  df.sort("count").show(5)
+  df.orderBy("count", "DEST_COUNTRY_NAME").show(5)
 }
