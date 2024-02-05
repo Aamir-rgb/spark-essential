@@ -24,19 +24,17 @@ object DataFrameBasic  extends App {
   val longType = LongType
 
   //schema
-  val carsSchema = StructType(
-    Array(
-      StructField("Name",StringType),
-      StructField("Miles_per_Gallon",StringType),
-        StructField("Cylinders",IntegerType),
-      StructField("Displacement",IntegerType),
-      StructField("Horsepower",IntegerType),
-      StructField("Weight_in_lbs",IntegerType),
-      StructField("Acceleration",DoubleType),
-      StructField("Year",StringType),
-      StructField("Origin",StringType),
-    )
-  )
+  val carsSchema = StructType(Array(
+    StructField("Name", StringType),
+    StructField("Miles_per_Gallon", DoubleType),
+    StructField("Cylinders", LongType),
+    StructField("Displacement", DoubleType),
+    StructField("Horsepower", LongType),
+    StructField("Weight_in_lbs", LongType),
+    StructField("Acceleration", DoubleType),
+    StructField("Year", DateType),
+    StructField("Origin", StringType)
+  ))
 
   //Obtain A Schema
   val carsDFSchema = firstDF.schema

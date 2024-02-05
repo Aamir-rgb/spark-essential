@@ -105,7 +105,7 @@ object DataSources extends App {
     .option("url", url)
     .option("user", user)
     .option("password", password)
-    .option("dbtable", "public.employee")
+    .option("dbtable", "public.employees")
     .load()
 
   /**
