@@ -49,5 +49,31 @@ import spark.implicits._
   val carsDFDrop = carsDF.drop("Weight_in_pounds")
   carsDFDrop.printSchema()
 
+  val europeanCarsDF = carsDF.filter(col("Origin") =!= "USA")
+  val europeanCarsDF2= carsDF.where(col("Origin") =!= "USA")
 
+  val americanCarsDF = carsDF.filter("Origin = 'USA'")
+
+  //Chain Filters
+  val americanPowerfulCarsDF = carsDF.filter(col("Origin") === "USA").filter(col("Horsepower") > 150)
+  val americanPowerfulCarsDF2 = carsDF.filter(col("Origin") === "USA" and col("Horsepower") > 150)
+  val americanPowerfulCarsDF3 = carsDF.filter("Origin = 'USA' and Horsepower > 150")
+
+  //Unioning Adding More Rows
+  val moreCarsDF = spark.read.option("inferSchema","true").json("src/main/resources/data/more_cars.json")
+  val allCarsDF = moreCarsDF.union(moreCarsDF)
+
+  //Distinct Values
+  val allCountriesDF = carsDF.select("Origin").distinct()
+
+  allCountriesDF.show()
+
+
+  //Exercises
+  //Read the movies DataFrame
+  val moviesDF = spark.read.option("inferSchema","true").json("src/main/resources/data/movies.json")
+  val totalMoviesGrossDF = moviesDF.selectExpr("Title","US_Gross","Worldwide_Gross","US_DVD_Sales","US_Gross+Worldwide_Gross as Total_Gross")
+  totalMoviesGrossDF.show()
+  val comedyMovies = moviesDF.where("Major_Genre = 'Comedy' and IMDB_Rating > 6")
+    comedyMovies.show()
 }
