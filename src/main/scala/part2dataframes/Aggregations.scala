@@ -1,7 +1,10 @@
 package part2dataframes
 
-import org.apache.spark.sql.{SparkSession, functions}
-import org.apache.spark.sql.functions.{approx_count_distinct, avg, col, count, countDistinct, mean, stddev}
+import org.apache.spark.sql.functions.count
+import org.apache.spark.sql.{SparkSession}
+import part2dataframes.Aggregations
+import org.apache.spark.sql.functions._
+
 
 object Aggregations extends App {
   //Create Spark Session
@@ -13,8 +16,13 @@ object Aggregations extends App {
   println(moviesDF.count())
   moviesDF.printSchema()
 
-  import org.apache.spark.sql.functions.{count,col}
   //counting
+  import org.apache.spark.sql.functions.col
   val genresCountDF = moviesDF.select(count(col("Major_Genre")))
+  val genresCountDF_v2 = moviesDF.selectExpr("count(Major_Genre)")
+  //Note we don't use moviesDF.selectExpr("count(col(Major_Genre)")
+  //This will give us error
+  val moviesDFCount = moviesDF.selectExpr("count(*)").show()
   genresCountDF.show()
+  genresCountDF_v2.show()
 }
